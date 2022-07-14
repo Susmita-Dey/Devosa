@@ -19,11 +19,13 @@ const retweet = (searchText) => {
   let params = {
     q: searchText + "",
     result_type: "mixed",
-    count: 25,
+    // count: 25,
   };
 
-  rwClient.v1.get(
-    "search/tweets",
+  console.log("Searching for data...");
+  
+  rwClient.v2.get(
+    "search/tweets.json",
     params,
     function (err_search, data_search, response_search) {
       let tweets = data_search.statuses;
@@ -52,8 +54,8 @@ const retweet = (searchText) => {
 
         // Call the 'statuses/retweet/:id' API endpoint for retweeting EACH of the tweetID
         for (let tweetID of tweetIDList) {
-          rwClient.v1.post(
-            "statuses/retweet/:id",
+          rwClient.v2.post(
+            "statuses/retweet/:id.json",
             { id: tweetID },
             function (err_rt, data_rt, response_rt) {
               if (!err_rt) {
@@ -64,8 +66,8 @@ const retweet = (searchText) => {
               }
 
               // For debugging
-              // console.log("Data = " + data_rt.text);
-              // console.log(data_rt)
+              console.log("Data = " + data_rt.text);
+              console.log(data_rt);
             }
           );
         }
@@ -79,8 +81,8 @@ const retweet = (searchText) => {
 
 // Run every 60 seconds
 setInterval(function () {
-  retweet("#OpenSource");
-}, 60000);
+  retweet("OpenSource");
+}, 10000);
 
 // const job = new CronJob("* * * * *", () => {
 //   console.log("Cron job starting..");
