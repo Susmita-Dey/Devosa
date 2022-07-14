@@ -14,18 +14,18 @@ const onlyUnique = (value, index, self) => {
   return self.indexOf(value) === index;
 };
 
-const retweet = (searchText) => {
+const retweet = () => {
   // Params to be passed to the 'search/tweets' API endpoint
   let params = {
-    q: searchText + "",
-    result_type: "mixed",
+    q: "#OpenSource",
+    // result_type: "mixed",
     // count: 25,
   };
 
   console.log("Searching for data...");
-  
-  rwClient.v2.get(
-    "search/tweets.json",
+
+  rwClient.v2.search(
+    "tweets/search/recent",
     params,
     function (err_search, data_search, response_search) {
       let tweets = data_search.statuses;
@@ -54,8 +54,8 @@ const retweet = (searchText) => {
 
         // Call the 'statuses/retweet/:id' API endpoint for retweeting EACH of the tweetID
         for (let tweetID of tweetIDList) {
-          rwClient.v2.post(
-            "statuses/retweet/:id.json",
+          rwClient.v2.retweet(
+            "users/:id/retweets",
             { id: tweetID },
             function (err_rt, data_rt, response_rt) {
               if (!err_rt) {
@@ -79,9 +79,23 @@ const retweet = (searchText) => {
   );
 };
 
+// const retweet = async () => {
+//   const jsTweets = await rwClient.v2.search("JavaScript", {
+//     "media.fields": "url",
+//   });
+
+//   for await (const tweet of jsTweets) {
+//     console.log(tweet);
+//   }
+// };
+// Consume every possible tweet of jsTweets (until rate limit is hit)
+// for await (const tweet of jsTweets) {
+//   console.log(tweet);
+// }
+
 // Run every 60 seconds
 setInterval(function () {
-  retweet("OpenSource");
+  retweet();
 }, 10000);
 
 // const job = new CronJob("* * * * *", () => {
